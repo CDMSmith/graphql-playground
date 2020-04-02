@@ -1,0 +1,6 @@
+-- requires node 10
+-- requires yarn 1.5.1
+
+build packages/graphql-playground-react
+build packages/graphql-playground-html
+build packages/graphql-playground-middleware-express

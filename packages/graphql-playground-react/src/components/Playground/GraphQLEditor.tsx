@@ -5,6 +5,7 @@ import { List } from 'immutable'
 
 // Query & Response Components
 import ExecuteButton from './ExecuteButton'
+import DownloadButton from './DownloadButton'
 import QueryEditor from './QueryEditor'
 import EditorWrapper, { Container } from './EditorWrapper'
 import CodeMirrorSizer from 'graphiql/dist/utility/CodeMirrorSizer'
@@ -243,6 +244,9 @@ class GraphQLEditor extends React.PureComponent<Props & ReduxProps> {
             <ResultWrap>
               <ResultDragBar ref={this.setResponseResizer} />
               <ExecuteButton />
+              {!this.props.queryRunning && this.props.responses  && this.props.responses.size !== 0 && (
+                  <DownloadButton />
+                )}
               {this.props.queryRunning &&
                 this.props.responses.size === 0 && <Spinner />}
               <Results setRef={this.setResultComponent} />

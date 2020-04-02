@@ -1,5 +1,5 @@
 {
-  "name": "graphql-playground-react",
+  "name": "@cdmsmith/graphql-playground-react",
   "version": "1.7.20",
   "main": "./lib/lib.js",
   "typings": "./lib/lib.d.ts",
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/graphcool/graphql-playground.git"
+    "url": "git+ssh://git@github.com/graphcool/graphql-playground.git"
   },
   "license": "MIT",
   "scripts": {
@@ -111,7 +111,7 @@
     "apollo-link-ws": "1.0.8",
     "calculate-size": "^1.1.1",
     "codemirror": "^5.38.0",
-    "codemirror-graphql": "timsuchanek/codemirror-graphql#details-fix",
+    "codemirror-graphql": "github:timsuchanek/codemirror-graphql#details-fix",
     "copy-to-clipboard": "^3.0.8",
     "cryptiles": "4.1.2",
     "cuid": "^1.3.8",
@@ -195,5 +195,14 @@
       "js"
     ],
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/graphcool/graphql-playground/issues"
+  },
+  "homepage": "https://github.com/graphcool/graphql-playground#readme",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "author": ""
 }
