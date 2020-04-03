@@ -135,21 +135,44 @@ class DownloadButton extends React.Component<ReduxProps, State> {
   }
 
   private onClick = () => {
-    const parser = new Parser({});
 
     this.props.responses.forEach(response => {      
-      const csv = parser.parse(JSON.parse(response.date).data);
-      var element = document.createElement('a');
-      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csv));
-      element.setAttribute('download', 'output.csv');
-  
-      element.style.display = 'none';
-      document.body.appendChild(element);
-  
-      element.click();
-  
-      document.body.removeChild(element);
+      const jsonObj = JSON.parse(response.date);
+      Object.keys(jsonObj.data).forEach(key => {
+        const data = jsonObj.data[key];
+        const flat = data.map(d => this.flatten(d, null, null));
+        
+        const parser = new Parser({});
+        const csv = parser.parse(flat);
+        
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csv));
+        element.setAttribute('download', `${key}.csv`);
+    
+        element.style.display = 'none';
+        document.body.appendChild(element);
+    
+        element.click();
+    
+        document.body.removeChild(element);
+      });
     });
+  }
+
+  private flatten = (obj, prefix, current) => {
+    prefix = prefix || []
+    current = current || {}
+  
+    // Remember kids, null is also an object!
+    if (typeof (obj) === 'object' && obj !== null) {
+      Object.keys(obj).forEach(key => {
+        this.flatten(obj[key], prefix.concat(key), current)
+      })
+    } else {
+      current[prefix.join('.')] = obj
+    }
+  
+    return current
   }
 
   private onOptionSelected = operation => {
