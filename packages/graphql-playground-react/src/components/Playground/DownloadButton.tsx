@@ -144,7 +144,7 @@ class DownloadButton extends React.Component<ReduxProps, State> {
         
         const parser = new Parser({});
         const csv = parser.parse(flat);
-        
+
         const element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csv));
         element.setAttribute('download', `${key}.csv`);
@@ -159,6 +159,8 @@ class DownloadButton extends React.Component<ReduxProps, State> {
     });
   }
 
+  // Yan Foto
+  // https://stackoverflow.com/questions/19098797/fastest-way-to-flatten-un-flatten-nested-json-objects
   private flatten = (obj, prefix, current) => {
     prefix = prefix || []
     current = current || {}
