@@ -16,8 +16,12 @@ import {
   getQueryRunning,
   getOperations,
   getSelectedSessionIdFromRoot,
+  getResponses
 } from '../../state/sessions/selectors'
 import { toJS } from './util/toJS'
+import { Parser } from 'json2csv'
+import { List } from 'immutable'
+import { ResponseRecord } from '../../state/sessions/reducers'
 
 export interface ReduxProps {
   runQuery: (operationName?: string) => void
@@ -25,6 +29,7 @@ export interface ReduxProps {
   queryRunning: boolean
   operations: any[]
   sessionId: string
+  responses: List<ResponseRecord>
 }
 
 export interface State {
@@ -93,7 +98,7 @@ class DownloadButton extends React.Component<ReduxProps, State> {
     const pathJSX = this.props.queryRunning ? (
       <rect fill="#FFFFFF" x="10" y="10" width="13" height="13" rx="1" />
     ) : (
-      <path d="M16 31l15-15h-9v-16h-12v16h-9z" />
+      <path d="M12 31l15-11h-7v-12h-8v12h-7z" />
     )
 
     return (
@@ -130,7 +135,21 @@ class DownloadButton extends React.Component<ReduxProps, State> {
   }
 
   private onClick = () => {
-    console.log('one day, this button will create a csv....')
+    const parser = new Parser({});
+
+    this.props.responses.forEach(response => {      
+      const csv = parser.parse(JSON.parse(response.date).data);
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csv));
+      element.setAttribute('download', 'output.csv');
+  
+      element.style.display = 'none';
+      document.body.appendChild(element);
+  
+      element.click();
+  
+      document.body.removeChild(element);
+    });
   }
 
   private onOptionSelected = operation => {
@@ -181,6 +200,7 @@ const mapStateToProps = createStructuredSelector({
   queryRunning: getQueryRunning,
   operations: getOperations,
   sessionId: getSelectedSessionIdFromRoot,
+  responses: getResponses,
 })
 
 export default connect(
