@@ -244,9 +244,9 @@ class GraphQLEditor extends React.PureComponent<Props & ReduxProps> {
             <ResultWrap>
               <ResultDragBar ref={this.setResponseResizer} />
               <ExecuteButton />
-              {!this.props.queryRunning && this.props.responses  && this.props.responses.size !== 0 && (
-                  <DownloadButton />
-                )}
+              {!this.props.queryRunning &&
+                this.props.responses &&
+                this.props.responses.size !== 0 && <DownloadButton />}
               {this.props.queryRunning &&
                 this.props.responses.size === 0 && <Spinner />}
               <Results setRef={this.setResultComponent} />
