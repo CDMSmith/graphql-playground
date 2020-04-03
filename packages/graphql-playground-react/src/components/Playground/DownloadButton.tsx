@@ -98,7 +98,7 @@ class DownloadButton extends React.Component<ReduxProps, State> {
     const pathJSX = this.props.queryRunning ? (
       <rect fill="#FFFFFF" x="10" y="10" width="13" height="13" rx="1" />
     ) : (
-      <path d="M12 31l15-11h-7v-12h-8v12h-7z" />
+      <path d="M5.016 18h13.969v2.016h-13.969v-2.016zM18.984 9l-6.984 6.984-6.984-6.984h3.984v-6h6v6h3.984z" />
     )
 
     return (
@@ -110,9 +110,9 @@ class DownloadButton extends React.Component<ReduxProps, State> {
           title="Download Results (csv)"
         >
           <svg
-            width="35"
-            height="35"
-            viewBox={`${this.props.queryRunning ? 4 : 3}.5,4.5,24,24`}
+            width="28"
+            height="28"
+            viewBox={`0,0,24,24`}
           >
             {pathJSX}
           </svg>
@@ -138,8 +138,16 @@ class DownloadButton extends React.Component<ReduxProps, State> {
 
     this.props.responses.forEach(response => {      
       const jsonObj = JSON.parse(response.date);
-      Object.keys(jsonObj.data).forEach(key => {
-        const data = jsonObj.data[key];
+      Object.keys(jsonObj.data).forEach(baseKey => {
+        let key = baseKey;
+        let joinedKey = key;
+        let data = jsonObj.data[joinedKey];
+        while(!Array.isArray(data)) {
+          joinedKey = Object.keys(data)[0];
+          key += '.' + joinedKey;
+          data = data[joinedKey];
+        }
+
         const flat = data.map(d => this.flatten(d, null, null));
         
         const parser = new Parser({});
@@ -147,7 +155,7 @@ class DownloadButton extends React.Component<ReduxProps, State> {
 
         const element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csv));
-        element.setAttribute('download', `${key}.csv`);
+        element.setAttribute('download', `${baseKey}.csv`);
     
         element.style.display = 'none';
         document.body.appendChild(element);
@@ -166,6 +174,10 @@ class DownloadButton extends React.Component<ReduxProps, State> {
     current = current || {}
   
     // Remember kids, null is also an object!
+    if(Array.isArray(obj)) {
+      obj = obj.join(' - ');
+    } 
+    
     if (typeof (obj) === 'object' && obj !== null) {
       Object.keys(obj).forEach(key => {
         this.flatten(obj[key], prefix.concat(key), current)
