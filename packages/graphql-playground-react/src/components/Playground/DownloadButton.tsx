@@ -173,17 +173,15 @@ class DownloadButton extends React.Component<ReduxProps, State> {
     prefix = prefix || []
     current = current || {}
   
-    //handle
-    // Remember kids, null is also an object!
-    if(Array.isArray(obj) && obj.length == obj.filter(o => typeof o == "string" || typeof o == "number").length) {
+    if(Array.isArray(obj) && obj.length === obj.filter(o => typeof o === "string" || typeof o === "number").length) {
       // join arrayed string, number values
       let joinWith = ', ';
-      if(obj.length == 2) {
+      if(obj.length === 2) {
         joinWith = ' - ';
       }
       
       obj = obj.join(joinWith);
-    } else if (Array.isArray(obj) && obj.length == obj.filter(o => typeof o == "object").length) {
+    } else if (Array.isArray(obj) && obj.length === obj.filter(o => typeof o === "object").length) {
       // format to be able to flatten arrays of objects
       // transform from original array to an object with indices as keys
       obj = {...obj};
