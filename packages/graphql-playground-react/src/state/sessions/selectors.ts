@@ -72,6 +72,8 @@ export const getIsPollingSchema = createSelector(
   (endpoint, settings) => {
     const json = JSON.parse(settings)
     try {
+      // disable polling
+      json['schema.polling.enable'] = false;
       const isPolling =
         json['schema.polling.enable'] &&
         endpoint.match(`/${json['schema.polling.endpointFilter']}`) &&
