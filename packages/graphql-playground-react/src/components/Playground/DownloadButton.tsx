@@ -7,7 +7,6 @@
  */
 
 import * as React from 'react'
-import DownloadButtonOperation from './DownloadButtonOperation'
 import { styled } from '../../styled'
 import { connect } from 'react-redux'
 import { runQuery, stopQuery } from '../../state/sessions/actions'
@@ -37,8 +36,6 @@ export interface State {
   highlight: any
 }
 
-let firstTime = true
-
 /**
  * DownloadButton
  *
@@ -56,44 +53,12 @@ class DownloadButton extends React.Component<ReduxProps, State> {
   }
 
   render() {
-    const { operations } = this.props
-    const optionsOpen = this.state.optionsOpen
-    const hasOptions = operations && operations.length > 1
 
     let options: any = null
-    if (hasOptions && optionsOpen) {
-      const highlight = this.state.highlight
-      options = (
-        <ExecuteBox>
-          <ExecuteOptions>
-            {operations.map(operation => (
-              <DownloadButtonOperation
-                operation={operation}
-                onMouseOver={this.handleMouseOver}
-                onMouseOut={this.handleMouseOut}
-                onMouseUp={this.handleMouseUp}
-                highlight={highlight}
-                key={operation.name ? operation.name.value : '*'}
-              />
-            ))}
-          </ExecuteOptions>
-        </ExecuteBox>
-      )
-    }
 
     // Allow click event if there is a running query or if there are not options
     // for which operation to run.
-    let onClick
-    if (this.props.queryRunning || !hasOptions) {
-      onClick = this.onClick
-    }
-
-    // Allow mouse down if there is no running query, there are options for
-    // which operation to run, and the dropdown is currently closed.
-    let onMouseDown
-    if (!this.props.queryRunning && hasOptions && !optionsOpen) {
-      onMouseDown = this.onOptionsOpen
-    }
+    let onClick = this.onClick;
 
     const pathJSX = this.props.queryRunning ? (
       <rect fill="#FFFFFF" x="10" y="10" width="13" height="13" rx="1" />
@@ -105,7 +70,6 @@ class DownloadButton extends React.Component<ReduxProps, State> {
       <Wrapper>
         <Button
           isRunning={this.props.queryRunning}
-          onMouseDown={onMouseDown}
           onClick={onClick}
           title="Download Results (csv)"
         >
@@ -120,18 +84,6 @@ class DownloadButton extends React.Component<ReduxProps, State> {
         {options}
       </Wrapper>
     )
-  }
-
-  private handleMouseOver = (operation: any) => {
-    this.setState({ highlight: operation })
-  }
-
-  private handleMouseOut = () => {
-    this.setState({ highlight: null })
-  }
-
-  private handleMouseUp = (operation: any) => {
-    this.onOptionSelected(operation)
   }
 
   private onClick = () => {
@@ -197,49 +149,6 @@ class DownloadButton extends React.Component<ReduxProps, State> {
   
     return current
   }
-
-  private onOptionSelected = operation => {
-    this.setState({ optionsOpen: false } as State)
-    if (!operation) {
-      return
-    }
-    this.props.runQuery(operation.name && operation.name.value)
-  }
-
-  private onOptionsOpen = downEvent => {
-    let initialPress = true
-    const downTarget = downEvent.target
-    this.setState({ highlight: null, optionsOpen: true })
-
-    let onMouseUp: any = upEvent => {
-      if (initialPress && upEvent.target === downTarget) {
-        initialPress = false
-      } else {
-        document.removeEventListener('mouseup', onMouseUp)
-        onMouseUp = null
-        if (downTarget.parentNode) {
-          const isOptionsMenuClicked =
-            // tslint:disable-next-line
-            downTarget.parentNode.compareDocumentPosition(upEvent.target) &
-            Node.DOCUMENT_POSITION_CONTAINED_BY
-          if (!isOptionsMenuClicked) {
-            // menu calls setState if it was clicked
-            this.setState({ optionsOpen: false } as State)
-          }
-          if (firstTime) {
-            this.onOptionSelected(
-              this.props.operations.find(
-                op => op.name.value === upEvent.target.textContent,
-              ) || this.props.operations[0],
-            )
-            firstTime = false
-          }
-        }
-      }
-    }
-
-    document.addEventListener('mouseup', onMouseUp)
-  }
 }
 
 const mapStateToProps = createStructuredSelector({
@@ -293,45 +202,5 @@ const Button = styled<ButtonProps, 'div'>('div')`
       p.isRunning
         ? p.theme.editorColours.executeButtonSubscriptionHover
         : p.theme.editorColours.executeButtonHover};
-  }
-`
-
-const ExecuteBox = styled.div`
-  background: #fff;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.25);
-  padding: 8px 0;
-  left: -1px;
-  margin: 0;
-  position: absolute;
-  top: 78px;
-  z-index: 100;
-  user-select: none;
-
-  &:before {
-    position: absolute;
-    background: white;
-    content: '';
-    top: -4px;
-    left: 34px;
-    transform: rotate(45deg);
-    width: 8px;
-    height: 8px;
-  }
-`
-
-const ExecuteOptions = styled.ul`
-  max-height: 270px;
-  overflow: scroll;
-
-  li {
-    cursor: pointer;
-    list-style: none;
-    min-width: 100px;
-    padding: 2px 30px 4px 10px;
-  }
-
-  li.selected {
-    background: rgb(39, 174, 96);
-    color: white;
   }
 `
