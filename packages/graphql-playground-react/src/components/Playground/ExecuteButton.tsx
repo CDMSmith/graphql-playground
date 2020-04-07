@@ -195,7 +195,7 @@ export default connect(
 const Wrapper = styled.div`
   position: absolute;
   left: -62px;
-  z-index: 5;
+  z-index: 6;
   top: 15px;
   margin: 0 14px 0 28px;
 `
